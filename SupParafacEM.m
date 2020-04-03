@@ -106,19 +106,19 @@ IndexV=1:(L-1);
 
 %%%initialize via parafac
 if(ParafacStart)
-    Init = parafac_GL(X,R);  % still has randomness in initial value, but in another layer     % GL
+    Init = parafac(X,R);  % still has randomness in initial value, but in another layer     % GL
     V = {Init{2:L}};
 else
   for(l=2:L) V{l-1}=normc(randn(m(l),R)); end
 end
 Vmat = zeros(p,R); % a very long matrix (p can be very large)
 for(r=1:R)
-   Temp = TensProd_GL(V,[r]);                                             
+   Temp = TensProd(V,[r]);                                             
    Vmat(:,r)=reshape(Temp,[],1);
 end
 Xmat = reshape(permute(X,[2:L 1]),[],n);
 U=Xmat'*Vmat;
-E=X-TensProd_GL({U V{:}});                                                                                  
+E=X-TensProd({U V{:}});                                                                                  
 se2=var(E(:));
 B=inv(Y'*Y)*Y'*U;
 if Sf_diag
@@ -194,10 +194,10 @@ while(niter<=max_niter && (abs(Pdiff)>convg_thres))
         PredMat = zeros(prod(m(Index(Index~=l))),R);
         VParams = zeros(prod(m(Index(Index~=l&Index~=1))),R);
         for(r=1:R)
-            Temp = TensProd_GL({U V{IndexV~=(l-1)}},[r]);                 
+            Temp = TensProd({U V{IndexV~=(l-1)}},[r]);                 
             PredMat(:,r) = reshape(Temp,[],1);
         if(L==3) Temp = V{IndexV~=(l-1)}(:,r);
-        else     Temp = TensProd_GL({V{IndexV~=(l-1)}},[r]);               
+        else     Temp = TensProd({V{IndexV~=(l-1)}},[r]);               
         end
              VParams(:,r) = reshape(Temp,[],1);
         end
@@ -210,7 +210,7 @@ while(niter<=max_niter && (abs(Pdiff)>convg_thres))
     
     %estimate Sf:
     for(r=1:R)
-       Temp = TensProd_GL(V,[r]);                                         
+       Temp = TensProd(V,[r]);                                         
         Vmat(:,r)=reshape(Temp,[],1);
     end
     se2=(trace(Xmat'*(Xmat-2*Vmat*cond_Mean')) + ...
@@ -229,7 +229,7 @@ while(niter<=max_niter && (abs(Pdiff)>convg_thres))
     for(l=2:L) V{l-1}=normc(V{l-1}); end
     VmatS=Vmat;
     for(r=1:R)
-       Temp = TensProd_GL(V,[r]);                                       
+       Temp = TensProd(V,[r]);                                       
        VmatS(:,r)=reshape(Temp,[],1);
     end
     Bscaling = ones(q,1)*sqrt(sum(Vmat.^2));  
