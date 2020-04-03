@@ -9,7 +9,7 @@ function [U,SqError]=parafac(Y,R)
 % Output
 %       U           List of basis vectors for parafac factorization, 
 %                   U{k}: mk X R  for k=1,...,K. Columns of U{K} have norm
-%                   1 for k>1.  TensProd_GL(U) approximates Y
+%                   1 for k>1.  TensProd(U) approximates Y
 %      
 %       SqError     Vector of squared error for the approximation at each
 %                   iteration (should be non-increasing).  
@@ -38,7 +38,7 @@ while(i<iters&&SqErrorDiff>thresh)
         ResponseMat = reshape(permute(Y,[Index(Index~=l) l]),[],m(l));
         PredMat = zeros(prod(m(Index(Index~=l))),R);
         for(r=1:R)
-            Temp = TensProd_GL({U{Index~=l}},[r]);
+            Temp = TensProd({U{Index~=l}},[r]);
             PredMat(:,r) = reshape(Temp,[],1);
         end
         U{l}= ResponseMat'*PredMat*inv(PredMat'*PredMat);
